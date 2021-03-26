@@ -205,6 +205,7 @@ namespace AssetTrackingSystem
 
         public static void PrintHeaderWithId()
         {
+            
             WriterExtensions.WriteInYellow(Tab("Id") + Tab("Category") + Tab("Purchase Date") + Tab("Model") + Tab("Price"));
             WriterExtensions.WriteInYellow(Tab("--") + Tab("-----") + Tab("-------------") + Tab("-----") + Tab("-----"));
         }
