@@ -23,7 +23,9 @@ namespace AssetTrackingSystem
             WriterExtensions.WriteInGreen("b) Create an asset");
             WriterExtensions.WriteInGreen("c) Update an asset");
             WriterExtensions.WriteInGreen("d) Delete an asset");
-        
+            WriterExtensions.WriteInRed("x) Exit Application");
+
+
             ConsoleKey command = Console.ReadKey(true).Key;
 
             if (command == ConsoleKey.A)
@@ -38,7 +40,10 @@ namespace AssetTrackingSystem
             if (command == ConsoleKey.D)
                 DeleteAssets();
 
-
+            if (command == ConsoleKey.X)
+            {
+                Environment.Exit(0);
+            }
         }
 
         private void DeleteAssets()
