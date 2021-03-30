@@ -6,8 +6,6 @@ namespace AssetTrackingSystem
 {
     public class Program
     {
-        static AssetContext _db = new AssetContext();
-
         public static void Main(string[] args)
         {
             var app = new App();

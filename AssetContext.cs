@@ -14,7 +14,7 @@ namespace AssetTrackingSystem
        // public string Office { get; set; }
         public string Category { get;  set; }
         public DateTime PurchaseDate { get;  set; }
-        public string ModelName { get;  set; }
+        public string BrandName { get;  set; }
         public double PurchasePrice { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

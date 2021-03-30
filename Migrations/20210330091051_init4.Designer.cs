@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetTrackingSystem.Migrations
 {
     [DbContext(typeof(AssetContext))]
-    [Migration("20210326135854_sf")]
-    partial class sf
+    [Migration("20210330091051_init4")]
+    partial class init4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,10 +28,10 @@ namespace AssetTrackingSystem.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Category")
+                    b.Property<string>("BrandName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ModelName")
+                    b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PurchaseDate")

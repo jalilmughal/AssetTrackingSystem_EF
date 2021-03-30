@@ -6,12 +6,12 @@ namespace AssetTrackingSystem
 {
     public class Mobile : Asset
     {
-        public Mobile(string category, DateTime purchaseDate, string modelName, double purchasePrice)
+        public Mobile(string category, DateTime purchaseDate, string brandName, double purchasePrice)
         {
             //Office= office;
             Category = category;
             PurchaseDate = purchaseDate;
-            ModelName = modelName;
+            BrandName = brandName;
             PurchasePrice = purchasePrice;
         }         
         //public List<Mobile> Mobiles { get; set; }

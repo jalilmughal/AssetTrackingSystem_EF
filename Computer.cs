@@ -6,11 +6,11 @@ namespace AssetTrackingSystem
 {
     public class Computer : Asset
     {
-        public Computer(string category, DateTime purchaseDate, string modelName, double purchasePrice)
+        public Computer(string category, DateTime purchaseDate, string brandName, double purchasePrice)
         {
             Category = category;
             PurchaseDate = purchaseDate;
-            ModelName = modelName;
+            BrandName = brandName;
             PurchasePrice = purchasePrice;
         }
        //public int Id { get; set; }

@@ -10,7 +10,7 @@ namespace AssetTrackingSystem
 
         public string Category { get; set; }
         public DateTime PurchaseDate { get; set; }
-        public string ModelName { get; set; }
+        public string BrandName { get; set; }
         public double PurchasePrice { get; set; }
 
         //public List<Computer> Computers { get; set; }

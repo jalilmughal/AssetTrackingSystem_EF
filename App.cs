@@ -13,148 +13,51 @@ namespace AssetTrackingSystem
         List<Asset> assetsList;
         internal void Run()
         {
-            PageMainMenu();
+            MainMenu();
         }
-        private void PageMainMenu()
+        private void MainMenu()
         {
-            ShowAllAssets();
-            WriterExtensions.WriteInGreen("Main Menu");
-            WriterExtensions.WriteInGreen("a) Go to Main Menu");
-            WriterExtensions.WriteInGreen("b) Create an asset");
-            WriterExtensions.WriteInGreen("c) Update an asset");
-            WriterExtensions.WriteInGreen("d) Delete an asset");
-            WriterExtensions.WriteInRed("x) Exit Application");
+            ReadAllAssetsFromDB();
 
+            Console.WriteLine("");
+            WriterExtensions.WriteInGreen("Main Menu".ToUpper());
+            WriterExtensions.WriteInYellow("C) Create an asset");
+            WriterExtensions.WriteInYellow("R) Read DB & Go to Main Menu");
+            WriterExtensions.WriteInYellow("U) Update an asset");
+            WriterExtensions.WriteInYellow("D) Delete an asset");
+            Console.WriteLine("");
+            WriterExtensions.WriteInRed("X) Exit Application");
+            Console.WriteLine("");
 
             ConsoleKey command = Console.ReadKey(true).Key;
 
-            if (command == ConsoleKey.A)
-                PageMainMenu();
-
-            if (command == ConsoleKey.B)
+            if (command == ConsoleKey.C)
                 CreateAssets();
 
-            if (command == ConsoleKey.C)
+            if (command == ConsoleKey.U)
                 UpdateAssets();
+
+            if (command == ConsoleKey.R)
+                MainMenu();
 
             if (command == ConsoleKey.D)
                 DeleteAssets();
 
             if (command == ConsoleKey.X)
-            {
-                Environment.Exit(0);
-            }
-        }
-
-        private void DeleteAssets()
-        {
-            WriterExtensions.WriteInGreen("Delete Assets");
-
-            ShowAllAssets();
-
-            Console.Write("Which asset (Id) you want to delete: ");
-
-            int assetId = int.Parse(Console.ReadLine());
-            Asset asset = _db.Assets.Find(assetId);
-            _db.Assets.Remove(asset);
-
-            //Save update data
-            _db.SaveChanges();
-
-            WriterExtensions.WriteInGreen("Asset Updated!");
-            Console.ReadKey();
-
-            PageMainMenu();
-        } 
-
-        private void UpdateAssets()
-        {
-            //Read all assets
-            WriterExtensions.WriteInGreen("Update Assets");
-
-            //Show all assests           
-            ShowAllAssets();
-            //Ask for ID of which asset to update
-
-            Console.Write("Which asset (Id) do you want to update: ");
-            int assetId = int.Parse(Console.ReadLine());
-            Asset asset = _db.Assets.Find(assetId);
-
-            //Show assets of given assetId
-            WriterExtensions.WriteInYellow("Current Category is: " + asset.Category);
-            Console.Write("Write the new Category: ");
-            asset.Category = Console.ReadLine();
-
-            WriterExtensions.WriteInYellow("Current Purchase Date is: " + asset.PurchaseDate);
-            Console.Write("Write the new Purchase Date: ");
-            asset.PurchaseDate = Convert.ToDateTime(Console.ReadLine());
-
-            WriterExtensions.WriteInYellow("Current Model Name is: " + asset.ModelName);
-            Console.Write("Write the new Model Name: ");
-            asset.ModelName = Console.ReadLine();
-
-            WriterExtensions.WriteInYellow("Current Purchase Price is: " + asset.PurchasePrice);
-            Console.Write("Write the new Purchase Price: ");
-            asset.PurchasePrice = Convert.ToDouble(Console.ReadLine());
-            
-
-            //Save update data
-            _db.SaveChanges();  
-
-            WriterExtensions.WriteInGreen("Asset Updated!");
-            Console.ReadKey();
-
-            PageMainMenu();
-
-            //show all assets
-        }
-
-        private void ShowAllAssets()
-        {
-            Console.Clear();
-            PrintHeaderWithId();
-            assetsList = _db.Assets.OrderBy(a => a.Id).ToList();
-            foreach (Asset assetItem in assetsList)
-            {
-                Console.WriteLine(Tab(assetItem.Id.ToString()) + Tab(assetItem.Category) + Tab(Convert.ToDateTime(assetItem.PurchaseDate).ToShortDateString()) + Tab(assetItem.ModelName) + Tab(assetItem.PurchasePrice.ToString()));
-            }
-        }
-
-        private void ReadAssets()
-        {
-            WriterExtensions.WriteInGreen("Read Assets");
-            PrintHeaderWithId();
-            //Reading all my data in the DB
-            assetsList = _db.Assets.OrderBy(Category => Category).ToList();
-
-            //Data is now IN Memory
-            assetsList = (List<Asset>)assetsList.OrderBy(a => a.Category).ThenBy(b => b.PurchaseDate).ToList();  //DB Sorting by Category Thenby PurchaseDate
-
-
-            //If purchaseDate older then 33 months from today's DateTime, WriteLine in RED else WriteLine normal.
-            foreach (Asset assetItem in assetsList)
-            {
-                if ((DateTime.Now > assetItem.PurchaseDate.AddMonths(33)))
-                {
-                    WriterExtensions.WriteInRed(Tab(assetItem.Id.ToString())+Tab(assetItem.Category) + Tab(Convert.ToDateTime(assetItem.PurchaseDate).ToShortDateString()) + Tab(assetItem.ModelName) + Tab(assetItem.PurchasePrice.ToString()));
-                }
-                else
-                {
-                    Console.WriteLine(Tab(assetItem.Id.ToString()) + Tab(assetItem.Category) + Tab(Convert.ToDateTime(assetItem.PurchaseDate).ToShortDateString()) + Tab(assetItem.ModelName) + Tab(assetItem.PurchasePrice.ToString()));
-                }
-            }
+                ExitApplication();
         }
 
         public void CreateAssets()
         {
-            WriterExtensions.WriteInGreen("Create Assets");
+            WriterExtensions.WriteInGreen("Create Assets".ToUpper());
+            Console.WriteLine("");
 
             string _Category = _db.Category;
             DateTime _PurchaseDate = _db.PurchaseDate;
-            string _ModelName = _db.ModelName;
+            string _BrandName = _db.BrandName;
             double _PurchasePrice = _db.PurchasePrice;
 
-            WriterExtensions.WriteInYellow("Type your product details bellow, exit by typing 'exit'.");
+            WriterExtensions.WriteInYellow("Type your product details bellow, Go to Main Menu by typing 'save'.");
             do
             {
                 //Input Category of the asset
@@ -162,7 +65,7 @@ namespace AssetTrackingSystem
                 Console.Write("Category: ");
 
                 _Category = Console.ReadLine();
-                if (_Category.ToLower().Trim() == "exit")
+                if (_Category.ToLower().Trim() == "save")
                 {
                     break;
                 }
@@ -171,20 +74,24 @@ namespace AssetTrackingSystem
                 WriterExtensions.WriteInYellow("Please enter date in format DD/MM/YYYY or YYYY/MM/DD");
                 Console.Write("Purchase Date: ");
                 _PurchaseDate = Convert.ToDateTime(Console.ReadLine());
+                if (_PurchaseDate.ToString().ToLower().Trim() == "save")
+                {
+                    break;
+                }
 
-                //Input ModelName of the asset
-                Console.Write("Model Name: ");
-                _ModelName = Console.ReadLine();
-                if (_ModelName.ToLower().Trim() == "exit")
+                //Input BrandName of the asset
+                Console.Write("Brand: ");
+                _BrandName = Console.ReadLine();
+                if (_BrandName.ToLower().Trim() == "save")
                 {
                     break;
                 }
 
                 //Input price of the asset
-                Console.WriteLine("Type Price as 123 and not decimal!");
+                Console.WriteLine("Type Price as 123 or in decimals!");
                 Console.Write("Price: ");
                 _PurchasePrice = Convert.ToDouble(Console.ReadLine());
-                if ((_PurchasePrice).ToString().ToLower().Trim() == "exit")
+                if ((_PurchasePrice).ToString().ToLower().Trim() == "save")
                 {
                     break;
                 }
@@ -192,33 +99,139 @@ namespace AssetTrackingSystem
                 //if-loop, if the _Category=laptop then add asset in computerAssets-List else add in mobileAssets-List.
                 if ((_Category.ToLower().Trim() == "laptop") && (!String.IsNullOrWhiteSpace(_Category)))
                 {
-                    _db.Assets.Add(new Computer(_Category, _PurchaseDate, _ModelName, (Convert.ToDouble(_PurchasePrice))));
+                    _db.Assets.Add(new Computer(_Category, _PurchaseDate, _BrandName, (Convert.ToDouble(_PurchasePrice))));
+                    WriterExtensions.WriteInGreen($"Asset '{_BrandName}' created!");
                 }
                 else
                 {
-                    _db.Assets.Add(new Mobile(_Category, _PurchaseDate, _ModelName, (Convert.ToDouble(_PurchasePrice))));
+                    _db.Assets.Add(new Mobile(_Category, _PurchaseDate, _BrandName, (Convert.ToDouble(_PurchasePrice))));
+                    WriterExtensions.WriteInGreen($"Asset '{_BrandName}' created!");
                 }
             } while (true);
-                                 
-            //Save create Database
+
+            //Save changes to Database
             _db.SaveChanges();
-
-            WriterExtensions.WriteInGreen("Asset Created!");
-            Console.ReadKey();
-            PageMainMenu();
+            //Go to MainMenu
+            MainMenu();
         }
+        private void ReadAllAssetsFromDB()
+        {
+            if (_db.Assets.Count() <= 0)
+            {
+                WriterExtensions.WriteInGreen("Welcome to ATS, your new Asset Tracking System".ToUpper());
+                WriterExtensions.WriteInYellow("Press 'C' to Create and Add an asset to your ATS!");
+            }
+            else
+            {
+                Console.Clear();
+                PrintHeaderWithId();
+                assetsList = _db.Assets.OrderBy(a => a.Id).ToList();
 
+                //Data is now IN Memory   
+                //DB Sorting by Category Thenby PurchaseDate
+                assetsList = (List<Asset>)assetsList.OrderBy(a => a.Category).ThenByDescending(b => b.PurchaseDate).ToList();
+                foreach (Asset assetItem in assetsList)
+                {
+                    //If purchaseDate older then 33 months from today's DateTime, WriteLine in RED else WriteLine normal.
+                    if ((DateTime.Now > assetItem.PurchaseDate.AddMonths(33)))
+                    {
+                        WriterExtensions.WriteInRed(Tab(assetItem.Id.ToString()) + Tab(assetItem.Category) + Tab(Convert.ToDateTime(assetItem.PurchaseDate).ToShortDateString()) + Tab(assetItem.BrandName) + Tab(assetItem.PurchasePrice.ToString()));
+                    }
+                    else
+                    {
+                        Console.WriteLine(Tab(assetItem.Id.ToString()) + Tab(assetItem.Category) + Tab(Convert.ToDateTime(assetItem.PurchaseDate).ToShortDateString()) + Tab(assetItem.BrandName) + Tab(assetItem.PurchasePrice.ToString()));
+                    }
+                }
+            }
+        }
+        private void UpdateAssets()
+        {   //checking if the database has any 
+            if (_db.Assets.Count() <= 0)
+            {
+                WriterExtensions.WriteInGreen("You must have atleast 1 asset to update!".ToUpper());
+            }
+            else
+            {
+                //Read all assests           
+                ReadAllAssetsFromDB();
+
+                //Read all assets
+                Console.WriteLine("");
+                WriterExtensions.WriteInGreen("Update Assets".ToUpper());
+
+                //Ask for ID of which asset to update
+                Console.Write("Asset (Id) you want to update: ");
+                int assetId = int.Parse(Console.ReadLine());
+                Asset asset = _db.Assets.Find(assetId);
+
+                //Show assets of given assetId
+                WriterExtensions.WriteInYellow("Current Category is: " + asset.Category);
+                Console.Write("New Category: ");
+                asset.Category = Console.ReadLine();
+
+                WriterExtensions.WriteInYellow("Current Purchase Date is: " + asset.PurchaseDate);
+                Console.Write("New Purchase Date: ");
+                asset.PurchaseDate = Convert.ToDateTime(Console.ReadLine());
+
+                WriterExtensions.WriteInYellow("Current Brand Name is: " + asset.BrandName);
+                Console.Write("Write the new Brand Name: ");
+                asset.BrandName = Console.ReadLine();
+
+                WriterExtensions.WriteInYellow("Current Purchase Price is: " + asset.PurchasePrice);
+                Console.Write("New Purchase Price: ");
+                asset.PurchasePrice = Convert.ToDouble(Console.ReadLine());
+
+
+                //Save update data
+                _db.SaveChanges();
+
+                WriterExtensions.WriteInGreen($"Asset Id: {assetId} has been updated!");
+                Console.ReadKey();
+            }
+            MainMenu();
+        }
+        private void DeleteAssets()
+        {
+            if (_db.Assets.Count() <= 0)
+            {
+                WriterExtensions.WriteInGreen("You must have atleast 1 asset to delete!".ToUpper());
+            }
+            else
+            {
+                ReadAllAssetsFromDB();
+                Console.WriteLine("");
+                WriterExtensions.WriteInGreen("Delete Assets".ToUpper());
+
+                Console.Write("Asset (Id) you want to delete: ");
+
+                int assetId = int.Parse(Console.ReadLine());
+                Asset asset = _db.Assets.Find(assetId);
+                _db.Assets.Remove(asset);
+
+                //Save update data
+                _db.SaveChanges();
+
+                WriterExtensions.WriteInGreen($"Asset {assetId}, has been deleted !");
+                Console.ReadKey();
+            }
+            MainMenu();
+        }
+        private void ExitApplication()
+        {
+            WriterExtensions.WriteInGreen("Have an amazing day, see you later :)");
+            return;
+        }
         public static void PrintHeaderWithId()
         {
-            
-            WriterExtensions.WriteInYellow(Tab("Id") + Tab("Category") + Tab("Purchase Date") + Tab("Model") + Tab("Price"));
-            WriterExtensions.WriteInYellow(Tab("--") + Tab("-----") + Tab("-------------") + Tab("-----") + Tab("-----"));
+
+            WriterExtensions.WriteInYellow(Tab("Id") + Tab("Category") + Tab("Purchase Date") + Tab("Brand") + Tab("Price"));
+            WriterExtensions.WriteInYellow(Tab("--") + Tab("--------") + Tab("-------------") + Tab("-----") + Tab("-----"));
         }
-        public static void PrintHeader()
+        public static void PrintHeaderWithoutId()
         {
-            WriterExtensions.WriteInYellow(Tab("Category") + Tab("Purchase Date") + Tab("Model") + Tab("Price"));
-            WriterExtensions.WriteInYellow(Tab("-----") + Tab("-------------") + Tab("-----") + Tab("-----"));
-        }                                                      
+            WriterExtensions.WriteInYellow(Tab("Category") + Tab("Purchase Date") + Tab("Brand") + Tab("Price"));
+            WriterExtensions.WriteInYellow(Tab("--------") + Tab("-------------") + Tab("-----") + Tab("-----"));
+        }
         public static string Tab(string input)
         {
             return input.PadRight(15);
