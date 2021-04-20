@@ -7,8 +7,19 @@ namespace AssetTrackingSystem
 {
     public class Office
     {
-       /* [Key]
-        public int id { get; set; }
-        public string Name { get; set; }         */
+       [Key]
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+        public Office(string name)
+        {
+            Name = name;
+        }
+        public Office()
+        {
+ 
+        }
+        //List<Mobile> Phones { get; set; }
+        //List<Computer> Computers { get; set; }
     }
 }
